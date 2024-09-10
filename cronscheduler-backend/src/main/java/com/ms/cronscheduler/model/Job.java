@@ -19,12 +19,12 @@ public class Job {
     @Column(unique = true)
     private String jobName;
 
-    private String sqlQuery;
+    private String[] sqlQuery;
     private String databaseUrl;
     private String databaseName;
     private String databaseUsername;
     private String databasePassword;
-    private String keyUserEmail;
+    private String[] keyUserEmail;
     private String emailBody;
     private String emailSubject;
 

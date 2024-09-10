@@ -8,8 +8,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
@@ -20,6 +26,12 @@ public class JobSchedulerService {
     @Autowired
     private JobService jobService;
     private ConcurrentHashMap<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
+
+    @Autowired
+    private DatabaseService databaseService;
+
+    @Autowired
+    private ExcelService excelService;
 
     @PostConstruct
     public void init() {
@@ -47,6 +59,17 @@ public class JobSchedulerService {
         scheduleTask(job);
     }
 
+    public  void writeByteArrayToExcelFile(ByteArrayInputStream byteArrayInputStream, String outputFilePath) throws IOException {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = byteArrayInputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, bytesRead);
+            }
+        }
+    }
+
+
     private Runnable createTask(Job job) {
         return () -> {
             try {
@@ -62,6 +85,20 @@ public class JobSchedulerService {
                 if (now.isAfter(startDate) && now.isBefore(endDate)) {
                     job.setStatus("IN PROGRESS");
                     // business logic
+
+                    List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseUrl(), job.getDatabaseUsername(), job.getDatabasePassword());
+                    ByteArrayInputStream excel = excelService.writeDataToExcel(result);
+
+                    String outputFilePath = job.getJobName() + now.toString() +".xlsx";
+
+                    try {
+                        writeByteArrayToExcelFile(excel, outputFilePath);
+                        System.out.println("Excel file created successfully!");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                 } else if(!now.isBefore(startDate)) {
                     job.setStatus("COMPLETED");
                     stopTask(job.getJobName());
