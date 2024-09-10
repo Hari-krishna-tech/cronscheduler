@@ -3,6 +3,8 @@ package com.ms.cronscheduler.service;
 
 import com.ms.cronscheduler.model.Job;
 import com.ms.cronscheduler.repository.JobRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ import java.util.Optional;
 public class JobService {
     @Autowired
     JobRepository jobRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     public Optional<Job> getJobById(Integer id) {
 
@@ -30,14 +35,61 @@ public class JobService {
     }
     @Transactional
     public Job update(Integer id,Job job) {
-        Optional<Job> oldJob = jobRepository.findById(id);
+        Job oldJob = jobRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Job not Found"));
 
-        oldJob.get().setJobName(job.getJobName());
-        oldJob.get().setCronFrequency(job.getCronFrequency());
-        oldJob.get().setStartDate(job.getStartDate());
-        oldJob.get().setEndDate(job.getEndDate());
-        oldJob.get().setStatus(job.getStatus());
-        return jobRepository.save(oldJob.get());
+//        boolean isUpdated = false;
+
+
+            oldJob.setJobName(job.getJobName());
+
+
+            oldJob.setCronFrequency(job.getCronFrequency());
+
+
+            oldJob.setStartDate(job.getStartDate());
+
+
+            oldJob.setEndDate(job.getEndDate());
+
+
+
+            oldJob.setSqlQuery(job.getSqlQuery());
+
+
+            oldJob.setDatabaseUrl(job.getDatabaseUrl());
+
+
+            oldJob.setDatabaseName(job.getDatabaseName());
+
+
+            oldJob.setDatabaseUsername(job.getDatabaseUsername());
+
+
+            oldJob.setDatabasePassword(job.getDatabasePassword());
+
+
+            oldJob.setKeyUserEmail(job.getKeyUserEmail());
+
+
+            oldJob.setEmailBody(job.getEmailBody());
+
+
+            oldJob.setEmailSubject(job.getEmailSubject());
+
+
+
+//        oldJob.setJobName(job.getJobName());
+//        oldJob.setCronFrequency(job.getCronFrequency());
+//        oldJob.setStartDate(job.getStartDate());
+//        oldJob.setEndDate(job.getEndDate());
+        oldJob.setStatus(job.getStatus());
+
+
+        return jobRepository.save(oldJob);
+
+
+
+
     }
     @Transactional
     public void deleteById(Integer id) {

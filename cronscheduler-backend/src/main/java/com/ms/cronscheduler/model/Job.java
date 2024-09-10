@@ -18,6 +18,17 @@ public class Job {
     @NotNull
     @Column(unique = true)
     private String jobName;
+
+    private String sqlQuery;
+    private String databaseUrl;
+    private String databaseName;
+    private String databaseUsername;
+    private String databasePassword;
+    private String keyUserEmail;
+    private String emailBody;
+    private String emailSubject;
+
+
     @NotNull
     private String cronFrequency;
     @Temporal(TemporalType.DATE)
@@ -27,7 +38,15 @@ public class Job {
     @NotNull
     private Date endDate;
 
-    @ColumnDefault("'NOT STARTED'")
+    @Column(name = "status", columnDefinition = "VARCHAR(255) DEFAULT 'NOT STARTED'")
     private String status;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = "NOT STARTED";
+        }
+    }
 
 }
