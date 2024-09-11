@@ -13,3 +13,14 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
+
+
+azure:
+  activedirectory:
+    tenant-id: dfsdf
+    client-secret: sfdsfsd
+    client-id: sfdsd
+
+sharepoint:
+  site-id: sdfsdfsd
+  drive-id: sdfdsfds

@@ -89,7 +89,7 @@ public class JobSchedulerService {
                     List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseUrl(), job.getDatabaseUsername(), job.getDatabasePassword());
                     ByteArrayInputStream excel = excelService.writeDataToExcel(result);
 
-                    String outputFilePath = job.getJobName() + now.toString() +".xlsx";
+                    String outputFilePath = job.getJobName() +now.getDayOfMonth()+ now.getMinute() + now.getSecond() +".xlsx";
 
                     try {
                         writeByteArrayToExcelFile(excel, outputFilePath);
