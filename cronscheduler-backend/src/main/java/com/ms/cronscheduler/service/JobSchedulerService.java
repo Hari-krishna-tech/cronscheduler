@@ -75,15 +75,20 @@ public class JobSchedulerService {
             try {
                 System.out.println("Executing task :" + job.getJobName());
                 LocalDateTime now = LocalDateTime.now();
-                LocalDateTime startDate = job.getStartDate().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime();
-                LocalDateTime endDate = job.getEndDate().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime();
+                ZoneId zoneId = ZoneId.systemDefault();
+                LocalDateTime startDate = job.getStartDateTime();
+                LocalDateTime endDate = job.getEndDateTime();
+//                LocalDateTime startDate = job.getStartDateTime().toInstant()
+//                        .atZone(ZoneId.systemDefault())
+//                        .toLocalDateTime();
+//                LocalDateTime endDate = job.getEndDateTime().toInstant()
+//                        .atZone(ZoneId.systemDefault())
+//                        .toLocalDateTime();
+
+
 
                 if (now.isAfter(startDate) && now.isBefore(endDate)) {
-                    job.setStatus("IN PROGRESS");
+                    job.setStatus("STARTED");
                     // business logic
 
                     List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseUrl(), job.getDatabaseUsername(), job.getDatabasePassword());

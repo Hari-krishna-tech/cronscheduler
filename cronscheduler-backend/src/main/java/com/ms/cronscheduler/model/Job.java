@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -31,12 +32,12 @@ public class Job {
 
     @NotNull
     private String cronFrequency;
-    @Temporal(TemporalType.DATE)
+//    @Temporal(TemporalType.DATE)
     @NotNull
-    private Date startDate;
-    @Temporal(TemporalType.DATE)
+    private LocalDateTime startDateTime;
+//    @Temporal(TemporalType.DATE)
     @NotNull
-    private Date endDate;
+    private LocalDateTime endDateTime;
 
     @Column(name = "status", columnDefinition = "VARCHAR(255) DEFAULT 'NOT STARTED'")
     private String status;

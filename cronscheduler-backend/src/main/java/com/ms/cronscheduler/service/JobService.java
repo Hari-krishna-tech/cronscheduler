@@ -46,10 +46,10 @@ public class JobService {
             oldJob.setCronFrequency(job.getCronFrequency());
 
 
-            oldJob.setStartDate(job.getStartDate());
+            oldJob.setStartDateTime(job.getStartDateTime());
 
 
-            oldJob.setEndDate(job.getEndDate());
+            oldJob.setEndDateTime(job.getEndDateTime());
 
 
 
