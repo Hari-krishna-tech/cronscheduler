@@ -57,6 +57,12 @@
 			<version>5.2.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.dhatim</groupId>
+			<artifactId>fastexcel</artifactId>
+			<version>0.18.4</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/com.microsoft.graph/microsoft-graph -->
 		<dependency>
