@@ -16,6 +16,18 @@ public class DatabaseService {
         List<List<Map<String, Object>>> resultList = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword)) {
+
+//            // Load the appropriate JDBC driver based on the database URL
+//            if (dbUrl.startsWith("jdbc:postgresql://")) {
+//                Class.forName("org.postgresql.Driver");
+//            } else if (dbUrl.startsWith("jdbc:mysql://")) {
+//                Class.forName("com.mysql.cj.jdbc.Driver");
+//            } else if (dbUrl.startsWith("jdbc:sqlserver://")) {
+//                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            } else {
+//                throw new RuntimeException("Unsupported database type.");
+//            }
+
             for (String sqlQuery : sqlQueries) {
                 List<Map<String, Object>> dataList = new ArrayList<>();
                 try (PreparedStatement stmt = conn.prepareStatement(sqlQuery);

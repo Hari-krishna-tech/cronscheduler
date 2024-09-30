@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.logging.Logger;
 
 @Service
 public class JobSchedulerService {
+
+    private static final Logger LOGGER = Logger.getLogger(JobSchedulerService.class.getName());
 
     private ThreadPoolTaskScheduler taskScheduler;
     @Autowired
@@ -32,6 +35,9 @@ public class JobSchedulerService {
 
     @Autowired
     private ExcelService excelService;
+
+    @Autowired
+    private EmailService emailService;
 
     @PostConstruct
     public void init() {
@@ -55,7 +61,7 @@ public class JobSchedulerService {
     public void rescheduleTask(Integer id, Job job) {
         Job oldJob = jobService.getJobById(id).orElseThrow(() -> new IllegalArgumentException("Job not found"));
         stopTask(oldJob.getJobName());
-        System.out.println("rescheduling  + " + job.getJobName());
+        LOGGER.info("rescheduling  + " + job.getJobName());
         scheduleTask(job);
     }
 
@@ -73,7 +79,7 @@ public class JobSchedulerService {
     private Runnable createTask(Job job) {
         return () -> {
             try {
-                System.out.println("Executing task :" + job.getJobName());
+                LOGGER.info("Executing task :" + job.getJobName());
                 LocalDateTime now = LocalDateTime.now();
                 ZoneId zoneId = ZoneId.systemDefault();
                 LocalDateTime startDate = job.getStartDateTime();
@@ -92,13 +98,15 @@ public class JobSchedulerService {
                     // business logic
 
                     List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseUrl(), job.getDatabaseUsername(), job.getDatabasePassword());
-                    ByteArrayInputStream excel = excelService.writeDataToExcel(result);
+                    LOGGER.info("DATA BASE FETCHED");
+                    byte[] excel = excelService.writeDataToExcelUsingFastExcel(result);
 
-                    String outputFilePath = job.getJobName() +now.getDayOfMonth()+ now.getMinute() + now.getSecond() +".xlsx";
+                    String outputFilePath = job.getJobName() +now.getDayOfMonth()+ now.getMinute() + now.getSecond() + ".xlsx";
 
                     try {
-                        writeByteArrayToExcelFile(excel, outputFilePath);
-                        System.out.println("Excel file created successfully!");
+                        //writeByteArrayToExcelFile(excel, outputFilePath);
+                        emailService.sendEmailWithAttachment(excel, outputFilePath,job.getKeyUserEmail(), job.getCc() ,job.getEmailBody(),job.getEmailSubject());
+                        LOGGER.info("Excel file created successfully!");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

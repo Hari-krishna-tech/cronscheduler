@@ -16,7 +16,7 @@ import java.util.Map;
 @Service
 public class ExcelService {
 
-    public ByteArrayInputStream writeDataToExcelUsingFastExcel(List<List<Map<String, Object>>> data) throws IOException {
+    public byte[] writeDataToExcelUsingFastExcel(List<List<Map<String, Object>>> data) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Workbook workbook = new Workbook(outputStream, "DemoExcel", "1.0");
 
@@ -47,11 +47,11 @@ public class ExcelService {
         }
 
         workbook.finish();
-        return new ByteArrayInputStream(outputStream.toByteArray());
+        return outputStream.toByteArray();
     }
 
 
-    public ByteArrayInputStream writeDataToExcel(List<List<Map<String, Object>>> data) throws IOException {
+    public byte[] writeDataToExcel(List<List<Map<String, Object>>> data) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -108,6 +108,6 @@ public class ExcelService {
         workbook.write(outputStream);
         workbook.close();
 
-        return new ByteArrayInputStream(outputStream.toByteArray());
+        return outputStream.toByteArray();
     }
 }

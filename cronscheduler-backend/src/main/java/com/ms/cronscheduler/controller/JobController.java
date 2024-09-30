@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin
@@ -33,13 +34,14 @@ public class JobController {
     @PostMapping("/jobs")
     public Job createJob(@RequestBody Job job) {
         // create schedular
+        System.out.println(job);
         jobSchedulerService.scheduleTask(job);
         // update database
         return jobService.save(job);
     }
 
     @PutMapping("/jobs/{id}")
-    public Job updateJob(@RequestBody Job job,@PathVariable Integer id) {
+    public Job updateJob(@RequestBody Job job,@PathVariable Integer id) throws IOException, ClassNotFoundException {
         jobSchedulerService.rescheduleTask(id,job);
         System.out.println(id);
         return jobService.update(id,job);

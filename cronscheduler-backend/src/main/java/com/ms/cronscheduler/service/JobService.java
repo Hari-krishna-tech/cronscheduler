@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class JobService {
         return jobRepository.save(job);
     }
     @Transactional
-    public Job update(Integer id,Job job) {
+    public Job update(Integer id,Job job) throws IOException, ClassNotFoundException {
         Job oldJob = jobRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Job not Found"));
 
 //        boolean isUpdated = false;
@@ -69,6 +70,8 @@ public class JobService {
 
 
             oldJob.setKeyUserEmail(job.getKeyUserEmail());
+
+            oldJob.setCc(job.getCc());
 
 
             oldJob.setEmailBody(job.getEmailBody());
