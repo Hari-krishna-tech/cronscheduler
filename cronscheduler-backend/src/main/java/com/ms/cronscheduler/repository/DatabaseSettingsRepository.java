@@ -1,11 +1,9 @@
 package com.ms.cronscheduler.repository;
 
-import com.ms.cronscheduler.model.Job;
+import com.ms.cronscheduler.model.DatabaseSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface JobRepository extends JpaRepository<Job, Long> {
-
+public interface DatabaseSettingsRepository extends JpaRepository<DatabaseSettings, Long> {
 }

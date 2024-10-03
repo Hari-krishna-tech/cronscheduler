@@ -14,21 +14,25 @@ import java.util.Date;
 
 
 @Entity
+@Table(name = "scheduler_job_list")
 public class Job {
     @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    @NotNull
-    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "job_name", nullable = false)
     private String jobName;
 
     @Lob
     @Column(name = "sql_query", columnDefinition = "BLOB")
     private byte[] sqlQuery;
+    @Column(name = "database_url", nullable = false)
     private String databaseUrl;
+    @Column(name = "database_name", nullable = false)
     private String databaseName;
+    @Column(name = "database_username", nullable = false)
     private String databaseUsername;
+    @Column(name = "database_password", nullable = false)
     private String databasePassword;
     @Lob
     @Column(name = "key_user_email", columnDefinition = "BLOB")
@@ -36,29 +40,46 @@ public class Job {
     @Lob
     @Column(name = "cc", columnDefinition = "BLOB")
     private byte[] cc;
+    @Column(name = "email_body" , nullable = false)
     private String emailBody;
+    @Column(name = "email_subject", nullable = false)
     private String emailSubject;
 
 
-    @NotNull
+
+    @Column(name = "cron_frequency", nullable = false)
     private String cronFrequency;
 //    @Temporal(TemporalType.DATE)
-    @NotNull
+
+    @Column(name = "start_date_time", nullable = false)
     private LocalDateTime startDateTime;
 //    @Temporal(TemporalType.DATE)
-    @NotNull
+
+    @Column(name = "end_date_time", nullable = false)
     private LocalDateTime endDateTime;
 
-    @Column(name = "status", columnDefinition = "VARCHAR(255) DEFAULT 'NOT STARTED'")
-    private String status;
+    @Column(name = "status", nullable = false)
+    private String status = "NOT STARTED";
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 
-    @PrePersist
-    public void prePersist() {
-        if (status == null) {
-            status = "NOT STARTED";
-        }
-    }
+
+
+
 
 
     // Convert String[] to byte[]
@@ -89,11 +110,11 @@ public class Job {
     public Job() {
     }
 
-    public @NotNull Integer getId() {
+    public  Long getId() {
         return id;
     }
 
-    public void setId(@NotNull Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -201,6 +222,45 @@ public class Job {
         this.cc = serialize(cc);
     }
 
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @Override
     public String toString() {

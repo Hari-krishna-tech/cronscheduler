@@ -58,7 +58,7 @@ public class JobSchedulerService {
         scheduledTasks.put(job.getJobName(), scheduledFuture);
     }
 
-    public void rescheduleTask(Integer id, Job job) {
+    public void rescheduleTask(Long id, Job job) {
         Job oldJob = jobService.getJobById(id).orElseThrow(() -> new IllegalArgumentException("Job not found"));
         stopTask(oldJob.getJobName());
         LOGGER.info("rescheduling  + " + job.getJobName());

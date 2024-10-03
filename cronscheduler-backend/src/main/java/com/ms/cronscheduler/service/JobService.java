@@ -21,7 +21,7 @@ public class JobService {
     @Autowired
     EntityManager entityManager;
 
-    public Optional<Job> getJobById(Integer id) {
+    public Optional<Job> getJobById(Long id) {
 
         return jobRepository.findById(id);
     }
@@ -35,7 +35,7 @@ public class JobService {
         return jobRepository.save(job);
     }
     @Transactional
-    public Job update(Integer id,Job job) throws IOException, ClassNotFoundException {
+    public Job update(Long id,Job job) throws IOException, ClassNotFoundException {
         Job oldJob = jobRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Job not Found"));
 
 //        boolean isUpdated = false;
@@ -79,6 +79,12 @@ public class JobService {
 
             oldJob.setEmailSubject(job.getEmailSubject());
 
+            oldJob.setCreatedAt(job.getCreatedAt());
+            oldJob.setCreatedBy(job.getCreatedBy());
+
+            oldJob.setUpdatedAt(job.getUpdatedAt());
+            oldJob.setUpdatedBy(job.getUpdatedBy());
+
 
 
 //        oldJob.setJobName(job.getJobName());
@@ -95,10 +101,9 @@ public class JobService {
 
     }
     @Transactional
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         jobRepository.deleteById(id);
     }
-
 
 
 }
