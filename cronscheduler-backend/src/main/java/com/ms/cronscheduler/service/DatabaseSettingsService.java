@@ -1,6 +1,7 @@
 package com.ms.cronscheduler.service;
 
 
+import com.ms.cronscheduler.dto.DatabaseSettingsDTO;
 import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.repository.DatabaseSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,15 @@ public class DatabaseSettingsService {
 
         databaseSettingsRepository.deleteById(id);
 
+    }
+
+    public DatabaseSettings getDatabaseSettingsById(Long id) {
+        return databaseSettingsRepository.findById(id).get();
+    }
+
+    public List<DatabaseSettingsDTO> getAllDatabaseSettingsDTO() {
+        List<DatabaseSettings> databaseSettings = databaseSettingsRepository.findAll();
+        List<DatabaseSettingsDTO> databaseSettingsDTO = databaseSettings.stream().map(databaseSetting -> new DatabaseSettingsDTO(databaseSetting.getId(), databaseSetting.getDatabaseSettingName())).toList();
+        return databaseSettingsDTO;
     }
 }

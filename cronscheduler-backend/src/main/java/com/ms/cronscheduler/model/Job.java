@@ -26,14 +26,11 @@ public class Job {
     @Lob
     @Column(name = "sql_query", columnDefinition = "BLOB")
     private byte[] sqlQuery;
-    @Column(name = "database_url", nullable = false)
-    private String databaseUrl;
-    @Column(name = "database_name", nullable = false)
-    private String databaseName;
-    @Column(name = "database_username", nullable = false)
-    private String databaseUsername;
-    @Column(name = "database_password", nullable = false)
-    private String databasePassword;
+
+    @ManyToOne
+    @JoinColumn(name = "database_setting_id", nullable = false)
+    private DatabaseSettings databaseSettings;
+
     @Lob
     @Column(name = "key_user_email", columnDefinition = "BLOB")
     private byte[] keyUserEmail;
@@ -126,36 +123,12 @@ public class Job {
         this.jobName = jobName;
     }
 
-    public String getDatabaseUrl() {
-        return databaseUrl;
+    public DatabaseSettings getDatabaseSettings() {
+        return databaseSettings;
     }
 
-    public void setDatabaseUrl(String databaseUrl) {
-        this.databaseUrl = databaseUrl;
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
-    }
-
-    public String getDatabaseUsername() {
-        return databaseUsername;
-    }
-
-    public void setDatabaseUsername(String databaseUsername) {
-        this.databaseUsername = databaseUsername;
-    }
-
-    public String getDatabasePassword() {
-        return databasePassword;
-    }
-
-    public void setDatabasePassword(String databasePassword) {
-        this.databasePassword = databasePassword;
+    public void setDatabaseSettings(DatabaseSettings databaseSettings) {
+        this.databaseSettings = databaseSettings;
     }
 
     public String[] getKeyUserEmail() throws IOException, ClassNotFoundException {
@@ -269,10 +242,6 @@ public class Job {
                     "id=" + id +
                     ", jobName='" + jobName + '\'' +
                     ", sqlQuery=" + Arrays.toString(deserialize(sqlQuery)) +
-                    ", databaseUrl='" + databaseUrl + '\'' +
-                    ", databaseName='" + databaseName + '\'' +
-                    ", databaseUsername='" + databaseUsername + '\'' +
-                    ", databasePassword='" + databasePassword + '\'' +
                     ", keyUserEmail=" + Arrays.toString(keyUserEmail) +
                     ", cc=" + Arrays.toString(cc) +
                     ", emailBody='" + emailBody + '\'' +

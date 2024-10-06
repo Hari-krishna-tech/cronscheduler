@@ -3,6 +3,8 @@ package com.ms.cronscheduler.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "settings_database_setting")
 public class DatabaseSettings {
@@ -24,6 +26,18 @@ public class DatabaseSettings {
 
     @Column(name = "database_username", nullable = false)
     private String databaseUsername;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_by", nullable = false)
+    private String updatedBy;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     public DatabaseSettings() {
     }
@@ -74,6 +88,38 @@ public class DatabaseSettings {
 
     public void setDatabaseUsername(String databaseUsername) {
         this.databaseUsername = databaseUsername;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

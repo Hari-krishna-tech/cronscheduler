@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/digital_support_portal
+    url: jdbc:mysql://localhost:3307/digital_support_portal
     username: root
-    password: your_password
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
@@ -11,7 +11,7 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
   sendgrid:
-    api-key: git 
+    api-key: git
 server:
   port: 10000
 

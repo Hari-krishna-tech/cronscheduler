@@ -1,6 +1,7 @@
 package com.ms.cronscheduler.controller;
 
 
+import com.ms.cronscheduler.dto.SchedulerJobDTO;
 import com.ms.cronscheduler.model.Job;
 import com.ms.cronscheduler.service.JobSchedulerService;
 import com.ms.cronscheduler.service.JobService;
@@ -32,7 +33,7 @@ public class JobController {
     }
 
     @PostMapping("/jobs")
-    public Job createJob(@RequestBody Job job) {
+    public Job createJob(@RequestBody SchedulerJobDTO job) throws IOException, ClassNotFoundException {
         // create schedular
         System.out.println(job);
         Job theJob = jobService.save(job);
@@ -42,7 +43,7 @@ public class JobController {
     }
 
     @PutMapping("/jobs/{id}")
-    public Job updateJob(@RequestBody Job job,@PathVariable Long id) throws IOException, ClassNotFoundException {
+    public Job updateJob(@RequestBody SchedulerJobDTO job,@PathVariable Long id) throws IOException, ClassNotFoundException {
         Job theJob = jobService.update(id,job);
         jobSchedulerService.rescheduleTask(id,theJob);
         System.out.println(id);

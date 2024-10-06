@@ -1,6 +1,8 @@
 package com.ms.cronscheduler.service;
 
 
+import com.ms.cronscheduler.dto.SchedulerJobDTO;
+import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.model.Job;
 import com.ms.cronscheduler.repository.JobRepository;
 import jakarta.persistence.EntityManager;
@@ -31,11 +33,35 @@ public class JobService {
     }
 
     @Transactional
-    public Job save(Job job) {
+    public Job save(SchedulerJobDTO theJob) throws IOException, ClassNotFoundException {
+        Job job = new Job();
+
+        job.setJobName(theJob.getJobName());
+        job.setCronFrequency(theJob.getCronFrequency());
+        job.setStartDateTime(theJob.getStartDateTime());
+        job.setEndDateTime(theJob.getEndDateTime());
+        job.setSqlQuery(theJob.getSqlQuery());
+        job.setCc(theJob.getCc());
+        job.setKeyUserEmail(theJob.getKeyUserEmail());
+        job.setEmailSubject(theJob.getEmailSubject());
+        job.setEmailBody(theJob.getEmailBody());
+        job.setStatus(theJob.getStatus());
+        job.setCreatedAt(theJob.getCreatedAt());
+        job.setCreatedBy(theJob.getCreatedBy());
+        job.setUpdatedAt(theJob.getUpdatedAt());
+        job.setUpdatedBy(theJob.getUpdatedBy());
+
+
+        DatabaseSettings databaseSettings  = new DatabaseSettings();
+        databaseSettings.setId(theJob.getDatabaseSettingsId());
+
+        job.setDatabaseSettings(databaseSettings);
+
+
         return jobRepository.save(job);
     }
     @Transactional
-    public Job update(Long id,Job job) throws IOException, ClassNotFoundException {
+    public Job update(Long id,SchedulerJobDTO job) throws IOException, ClassNotFoundException {
         Job oldJob = jobRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Job not Found"));
 
 //        boolean isUpdated = false;
@@ -56,17 +82,9 @@ public class JobService {
 
             oldJob.setSqlQuery(job.getSqlQuery());
 
-
-            oldJob.setDatabaseUrl(job.getDatabaseUrl());
-
-
-            oldJob.setDatabaseName(job.getDatabaseName());
-
-
-            oldJob.setDatabaseUsername(job.getDatabaseUsername());
-
-
-            oldJob.setDatabasePassword(job.getDatabasePassword());
+            DatabaseSettings databaseSettings  = new DatabaseSettings();
+            databaseSettings.setId(job.getDatabaseSettingsId());
+            oldJob.setDatabaseSettings(databaseSettings);
 
 
             oldJob.setKeyUserEmail(job.getKeyUserEmail());

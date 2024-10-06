@@ -1,5 +1,7 @@
 package com.ms.cronscheduler.service;
 
+import com.ms.cronscheduler.dto.SchedulerJobDTO;
+import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.model.Job;
 import com.ms.cronscheduler.repository.JobRepository;
 import jakarta.annotation.PostConstruct;
@@ -97,7 +99,7 @@ public class JobSchedulerService {
                     job.setStatus("STARTED");
                     // business logic
 
-                    List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseUrl(), job.getDatabaseUsername(), job.getDatabasePassword());
+                    List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseSettings().getDatabaseUrl(), job.getDatabaseSettings().getDatabaseUsername(), job.getDatabaseSettings().getDatabasePassword());
                     LOGGER.info("DATA BASE FETCHED");
                     byte[] excel = excelService.writeDataToExcelUsingFastExcel(result);
 
@@ -117,12 +119,34 @@ public class JobSchedulerService {
                     stopTask(job.getJobName());
                 }
 
-                jobService.update(job.getId(), job);
+                jobService.update(job.getId(), createDto(job));
             } catch (Exception e) {
                 // Log the exception
                 e.printStackTrace();
             }
         };
+    }
+
+    public SchedulerJobDTO createDto(Job theJob) throws IOException, ClassNotFoundException {
+        SchedulerJobDTO job = new SchedulerJobDTO();
+        job.setJobName(theJob.getJobName());
+        job.setCronFrequency(theJob.getCronFrequency());
+        job.setStartDateTime(theJob.getStartDateTime());
+        job.setEndDateTime(theJob.getEndDateTime());
+        job.setSqlQuery(theJob.getSqlQuery());
+        job.setCc(theJob.getCc());
+        job.setKeyUserEmail(theJob.getKeyUserEmail());
+        job.setEmailSubject(theJob.getEmailSubject());
+        job.setEmailBody(theJob.getEmailBody());
+        job.setDatabaseSettingsId(theJob.getDatabaseSettings().getId());
+        job.setStatus(theJob.getStatus());
+        job.setCreatedAt(theJob.getCreatedAt());
+        job.setUpdatedAt(theJob.getUpdatedAt());
+        job.setCreatedBy(theJob.getCreatedBy());
+        job.setUpdatedBy(theJob.getUpdatedBy());
+
+        return job;
+
     }
 
     public void stopTask(String taskName) {

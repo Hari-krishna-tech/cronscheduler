@@ -1,5 +1,6 @@
 package com.ms.cronscheduler.controller;
 
+import com.ms.cronscheduler.dto.DatabaseSettingsDTO;
 import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.service.DatabaseSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,16 @@ public class DatabaseSettingController {
     public List<DatabaseSettings> getDatabaseSettingsList() {
         return databaseSettingsService.getAllDatabaseSettings();
 
+    }
+
+    @GetMapping("/list/id")
+    public List<DatabaseSettingsDTO> getDatabaseSettingsListDTO() {
+        return databaseSettingsService.getAllDatabaseSettingsDTO();
+    }
+
+    @GetMapping("/{id}")
+    public DatabaseSettings getDatabaseSettings(@PathVariable Long id) {
+        return databaseSettingsService.getDatabaseSettingsById(id);
     }
 
     @PostMapping("/")
