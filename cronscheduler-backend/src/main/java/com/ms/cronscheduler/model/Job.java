@@ -27,7 +27,8 @@ public class Job {
     @Column(name = "sql_query", columnDefinition = "BLOB")
     private byte[] sqlQuery;
 
-    @ManyToOne
+    // loading eager
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "database_setting_id", nullable = false)
     private DatabaseSettings databaseSettings;
 
@@ -56,7 +57,7 @@ public class Job {
     private LocalDateTime endDateTime;
 
     @Column(name = "status", nullable = false)
-    private String status = "NOT STARTED";
+    private String status = "SCHEDULED";
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;

@@ -12,10 +12,28 @@ import java.util.Map;
 @Service
 public class DatabaseService {
 
+    public static String extractDatabaseName(String jdbcUrl) {
+        // Check if the URL contains a database name
+        if (jdbcUrl.contains("/")) {
+            // Extract the part after the last '/'
+            return jdbcUrl.substring(jdbcUrl.lastIndexOf("/") + 1);
+        } else {
+            throw new IllegalArgumentException("Invalid JDBC URL format.");
+        }
+    }
+
     public List<List<Map<String, Object>>> fetchData(List<String> sqlQueries, String dbUrl, String dbUserName, String dbPassword) {
         List<List<Map<String, Object>>> resultList = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword)) {
+        String formatteddbUrl = dbUrl;
+        if(dbUrl.startsWith("jdbc:sqlserver://")) {
+            // extract database from end
+            String database = extractDatabaseName(dbUrl);
+            String urlWithOutDatabase = removeDatabaseName(dbUrl);
+            formatteddbUrl = urlWithOutDatabase + ";database=" + database + ";encrypt=true;trustServerCertificate=false;loginTimeout=30;";
+        }
+
+        try (Connection conn = DriverManager.getConnection(formatteddbUrl, dbUserName, dbPassword)) {
 
 //            // Load the appropriate JDBC driver based on the database URL
 //            if (dbUrl.startsWith("jdbc:postgresql://")) {
@@ -27,6 +45,7 @@ public class DatabaseService {
 //            } else {
 //                throw new RuntimeException("Unsupported database type.");
 //            }
+
 
             for (String sqlQuery : sqlQueries) {
                 List<Map<String, Object>> dataList = new ArrayList<>();
@@ -50,6 +69,15 @@ public class DatabaseService {
             throw new RuntimeException(e);
         }
         return resultList;
+    }
+
+    private static  String removeDatabaseName(String dbUrl) {
+        if (dbUrl.contains("/")) {
+            // Extract the part before the last '/'
+            return dbUrl.substring(0, dbUrl.lastIndexOf("/"));
+        } else {
+            throw new IllegalArgumentException("Invalid JDBC URL format.");
+        }
     }
 }
 

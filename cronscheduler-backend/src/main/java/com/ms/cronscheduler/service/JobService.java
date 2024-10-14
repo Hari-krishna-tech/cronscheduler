@@ -21,6 +21,9 @@ public class JobService {
     JobRepository jobRepository;
 
     @Autowired
+    DatabaseSettingsService databaseSettingsService;
+
+    @Autowired
     EntityManager entityManager;
 
     public Optional<Job> getJobById(Long id) {
@@ -52,10 +55,10 @@ public class JobService {
         job.setUpdatedBy(theJob.getUpdatedBy());
 
 
-        DatabaseSettings databaseSettings  = new DatabaseSettings();
-        databaseSettings.setId(theJob.getDatabaseSettingsId());
-
+        DatabaseSettings databaseSettings = databaseSettingsService.getDatabaseSettingsById(theJob.getDatabaseSettingsId());
         job.setDatabaseSettings(databaseSettings);
+
+
 
 
         return jobRepository.save(job);
@@ -82,10 +85,8 @@ public class JobService {
 
             oldJob.setSqlQuery(job.getSqlQuery());
 
-            DatabaseSettings databaseSettings  = new DatabaseSettings();
-            databaseSettings.setId(job.getDatabaseSettingsId());
+            DatabaseSettings databaseSettings = databaseSettingsService.getDatabaseSettingsById(job.getDatabaseSettingsId());
             oldJob.setDatabaseSettings(databaseSettings);
-
 
             oldJob.setKeyUserEmail(job.getKeyUserEmail());
 

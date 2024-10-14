@@ -96,7 +96,7 @@ public class JobSchedulerService {
 
 
                 if (now.isAfter(startDate) && now.isBefore(endDate)) {
-                    job.setStatus("STARTED");
+                    job.setStatus("IN PROGRESS");
                     // business logic
 
                     List<List<Map<String, Object>>> result = databaseService.fetchData(Arrays.asList(job.getSqlQuery()), job.getDatabaseSettings().getDatabaseUrl(), job.getDatabaseSettings().getDatabaseUsername(), job.getDatabaseSettings().getDatabasePassword());
@@ -154,6 +154,7 @@ public class JobSchedulerService {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
             scheduledTasks.remove(taskName);
+            System.out.println(taskName + " stopped");
         }
     }
 }

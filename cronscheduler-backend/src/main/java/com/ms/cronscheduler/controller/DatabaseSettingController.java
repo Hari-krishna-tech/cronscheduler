@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ *
+ */
+
 @CrossOrigin()
 @RestController
 @RequestMapping("/database-settings")
@@ -15,6 +19,12 @@ public class DatabaseSettingController {
 
     @Autowired
     DatabaseSettingsService databaseSettingsService;
+
+    /**
+     *
+     *
+     * @return List of DatabaseSettings Objects
+     */
 
     @GetMapping("/list")
     public List<DatabaseSettings> getDatabaseSettingsList() {
@@ -31,6 +41,12 @@ public class DatabaseSettingController {
     public DatabaseSettings getDatabaseSettings(@PathVariable Long id) {
         return databaseSettingsService.getDatabaseSettingsById(id);
     }
+
+    /**
+     *
+     * @param databaseSettings get's databaseSettings object from the client
+     * @return databasesettings that is stored in the database
+     */
 
     @PostMapping("/")
     public DatabaseSettings addToDatabaseSettings(@RequestBody DatabaseSettings databaseSettings) {

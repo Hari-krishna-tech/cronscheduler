@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 // Example DTO for creating a new job
 public class SchedulerJobDTO {
+
     private Long databaseSettingsId; // Only need the ID, not the whole settings object
     private String jobName;
     private byte[] sqlQuery;
@@ -17,11 +18,13 @@ public class SchedulerJobDTO {
     private LocalDateTime endDateTime;
     private LocalDateTime createdAt;
     private Boolean isDeleted;
-    private String Status = "NOT STARTED";
+    private String Status = "SCHEDULED";
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
     // getters and setters
+
+
 
 
     public Long getDatabaseSettingsId() {

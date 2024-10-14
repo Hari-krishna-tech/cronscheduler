@@ -36,7 +36,8 @@ public class JobController {
     public Job createJob(@RequestBody SchedulerJobDTO job) throws IOException, ClassNotFoundException {
         // create schedular
         System.out.println(job);
-        Job theJob = jobService.save(job);
+        Job theJob1 = jobService.save(job);
+        Job theJob = jobService.getJobById(theJob1.getId()).get();
         jobSchedulerService.scheduleTask(theJob);
         // update database
         return theJob;
