@@ -2,6 +2,7 @@ package com.ms.cronscheduler.service;
 
 
 import com.ms.cronscheduler.dto.DatabaseSettingsDTO;
+import com.ms.cronscheduler.errorHandling.ResourceNotFoundException;
 import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.repository.DatabaseSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class DatabaseSettingsService {
     private DatabaseSettingsRepository databaseSettingsRepository;
 
     public List<DatabaseSettings> getAllDatabaseSettings() {
-        return databaseSettingsRepository.findAll();
+        return databaseSettingsRepository.findAllImpl();
     }
 
     public DatabaseSettings postDatabaseSettings(DatabaseSettings databaseSettings) {
@@ -25,19 +26,29 @@ public class DatabaseSettingsService {
 
     public DatabaseSettings updateDatabaseSettings(Long id, DatabaseSettings databaseSettings) {
 
-        DatabaseSettings oldDatabaseSettings = databaseSettingsRepository.findById(id).get();
+        if(databaseSettingsRepository.findById(id).isPresent()) {
+            DatabaseSettings oldDatabaseSettings = databaseSettingsRepository.findById(id).get();
 
-        oldDatabaseSettings.setDatabaseName(databaseSettings.getDatabaseName());
-        oldDatabaseSettings.setDatabasePassword(databaseSettings.getDatabasePassword());
-        oldDatabaseSettings.setDatabaseUrl(databaseSettings.getDatabaseUrl());
-        oldDatabaseSettings.setDatabaseUsername(databaseSettings.getDatabaseUsername());
+            oldDatabaseSettings.setDatabaseName(databaseSettings.getDatabaseName());
+            oldDatabaseSettings.setDatabasePassword(databaseSettings.getDatabasePassword());
+            oldDatabaseSettings.setDatabaseUrl(databaseSettings.getDatabaseUrl());
+            oldDatabaseSettings.setDatabaseUsername(databaseSettings.getDatabaseUsername());
+            oldDatabaseSettings.setIsDeleted(databaseSettings.getIsDeleted());
 
-        return databaseSettingsRepository.save(oldDatabaseSettings);
+            return databaseSettingsRepository.save(oldDatabaseSettings);
+        } else {
+            throw new ResourceNotFoundException("Database settings not found");
+        }
+
 
     }
 
     public void deleteDatabaseSettings(Long id) {
+        DatabaseSettings databaseSettings = this.getDatabaseSettingsById(id);
 
+        if(true ) {
+            throw new IllegalStateException("Cannot Delete database settings with Active Job");
+        }
         databaseSettingsRepository.deleteById(id);
 
     }
@@ -47,8 +58,8 @@ public class DatabaseSettingsService {
     }
 
     public List<DatabaseSettingsDTO> getAllDatabaseSettingsDTO() {
-        List<DatabaseSettings> databaseSettings = databaseSettingsRepository.findAll();
-        List<DatabaseSettingsDTO> databaseSettingsDTO = databaseSettings.stream().map(databaseSetting -> new DatabaseSettingsDTO(databaseSetting.getId(), databaseSetting.getDatabaseSettingName())).toList();
-        return databaseSettingsDTO;
+        List<DatabaseSettings> databaseSettings = databaseSettingsRepository.findAllImpl();
+        return databaseSettings.stream().map(databaseSetting -> new DatabaseSettingsDTO(databaseSetting.getId(), databaseSetting.getDatabaseSettingName())).toList();
+
     }
 }

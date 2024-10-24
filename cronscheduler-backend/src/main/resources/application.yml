@@ -11,7 +11,7 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
   sendgrid:
-    api-key: 
+    api-key:
 server:
   port: 10000
 

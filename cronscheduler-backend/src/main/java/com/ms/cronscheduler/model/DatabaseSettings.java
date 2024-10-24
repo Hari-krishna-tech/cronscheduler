@@ -39,6 +39,13 @@ public class DatabaseSettings {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name="is_deleted")
+    private boolean isDeleted = false;
+
+
+
+
+
     public DatabaseSettings() {
     }
 
@@ -122,6 +129,14 @@ public class DatabaseSettings {
         this.updatedAt = updatedAt;
     }
 
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "DatabaseSettings{" +
@@ -133,4 +148,6 @@ public class DatabaseSettings {
                 ", databaseUsername='" + databaseUsername + '\'' +
                 '}';
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.ms.cronscheduler.service;
 
 import com.ms.cronscheduler.dto.SchedulerJobDTO;
+import com.ms.cronscheduler.errorHandling.ResourceNotFoundException;
 import com.ms.cronscheduler.model.DatabaseSettings;
 import com.ms.cronscheduler.model.Job;
 import com.ms.cronscheduler.repository.JobRepository;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RelationServiceNotRegisteredException;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,56 +46,52 @@ public class JobSchedulerService {
     @PostConstruct
     public void init() {
         initializeTaskScheduler();
+        restoreAllActiveJobs();
+    }
+
+    private void restoreAllActiveJobs() {
+        List<Job> activeJobs = jobService.findByStatusAndIsDeletedFalse();
+        activeJobs.forEach(this::scheduleTask);
     }
 
     private void initializeTaskScheduler() {
         taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(50);
+        taskScheduler.setPoolSize(200);
         taskScheduler.setThreadNamePrefix("jobScheduler-");
         taskScheduler.initialize();
     }
 
     public void scheduleTask(Job job) {
-        Runnable task = createTask(job);
+        Runnable task = createTask(job.getId());
         CronTrigger cronTrigger = new CronTrigger("0 " + job.getCronFrequency());
         ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(task, cronTrigger);
+        assert scheduledFuture != null;
         scheduledTasks.put(job.getJobName(), scheduledFuture);
     }
 
-    public void rescheduleTask(Long id, Job job) {
+    public void rescheduleTask(Long id, SchedulerJobDTO job) throws IOException, ClassNotFoundException {
         Job oldJob = jobService.getJobById(id).orElseThrow(() -> new IllegalArgumentException("Job not found"));
         stopTask(oldJob.getJobName());
         LOGGER.info("rescheduling  + " + job.getJobName());
-        scheduleTask(job);
-    }
-
-    public  void writeByteArrayToExcelFile(ByteArrayInputStream byteArrayInputStream, String outputFilePath) throws IOException {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = byteArrayInputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, bytesRead);
-            }
-        }
+        Job newJob = jobService.update(id,job);
+        scheduleTask(newJob);
     }
 
 
-    private Runnable createTask(Job job) {
+    private Runnable createTask(Long jobId) {
         return () -> {
+            Job job;
+            if(jobService.getJobById(jobId).isPresent()) {
+                job = jobService.getJobById(jobId).get();
+            } else {
+                throw new ResourceNotFoundException("Job not found");
+            }
             try {
                 LOGGER.info("Executing task :" + job.getJobName());
                 LocalDateTime now = LocalDateTime.now();
                 ZoneId zoneId = ZoneId.systemDefault();
                 LocalDateTime startDate = job.getStartDateTime();
                 LocalDateTime endDate = job.getEndDateTime();
-//                LocalDateTime startDate = job.getStartDateTime().toInstant()
-//                        .atZone(ZoneId.systemDefault())
-//                        .toLocalDateTime();
-//                LocalDateTime endDate = job.getEndDateTime().toInstant()
-//                        .atZone(ZoneId.systemDefault())
-//                        .toLocalDateTime();
-
-
 
                 if (now.isAfter(startDate) && now.isBefore(endDate)) {
                     job.setStatus("IN PROGRESS");
@@ -103,12 +101,12 @@ public class JobSchedulerService {
                     LOGGER.info("DATA BASE FETCHED");
                     byte[] excel = excelService.writeDataToExcelUsingFastExcel(result);
 
-                    String outputFilePath = job.getJobName() +now.getDayOfMonth()+ now.getMinute() + now.getSecond() + ".xlsx";
+                    String outputFilePath = job.getJobName() + ".xlsx";
 
                     try {
                         //writeByteArrayToExcelFile(excel, outputFilePath);
                         emailService.sendEmailWithAttachment(excel, outputFilePath,job.getKeyUserEmail(), job.getCc() ,job.getEmailBody(),job.getEmailSubject());
-                        LOGGER.info("Excel file created successfully!");
+                        LOGGER.info("Excel file created successfully! and mail send");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -144,6 +142,7 @@ public class JobSchedulerService {
         job.setUpdatedAt(theJob.getUpdatedAt());
         job.setCreatedBy(theJob.getCreatedBy());
         job.setUpdatedBy(theJob.getUpdatedBy());
+        job.setIsDeleted(theJob.getIsDeleted());
 
         return job;
 

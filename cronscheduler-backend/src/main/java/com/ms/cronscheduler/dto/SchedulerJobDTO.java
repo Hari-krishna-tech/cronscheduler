@@ -17,7 +17,7 @@ public class SchedulerJobDTO {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private LocalDateTime createdAt;
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
     private String Status = "SCHEDULED";
     private String createdBy;
     private LocalDateTime updatedAt;
@@ -139,11 +139,9 @@ public class SchedulerJobDTO {
         this.updatedBy = updatedBy;
     }
 
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
 
-    public void setDeleted(Boolean deleted) {
+
+    public void setIsDeleted(Boolean deleted) {
         isDeleted = deleted;
     }
 
@@ -168,5 +166,9 @@ public class SchedulerJobDTO {
              ObjectInputStream ois = new ObjectInputStream(bis)) {
             return (String[]) ois.readObject();
         }
+    }
+
+    public Boolean getIsDeleted() {
+        return this.isDeleted;
     }
 }

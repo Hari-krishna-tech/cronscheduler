@@ -60,7 +60,7 @@ public class Job {
     private String status = "SCHEDULED";
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_by", nullable = false)
     private String createdBy;
@@ -196,11 +196,11 @@ public class Job {
         this.cc = serialize(cc);
     }
 
-    public Boolean getDeleted() {
+    public Boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setIsDeleted(Boolean deleted) {
         isDeleted = deleted;
     }
 

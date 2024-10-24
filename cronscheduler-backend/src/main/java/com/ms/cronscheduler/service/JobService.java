@@ -32,7 +32,7 @@ public class JobService {
     }
 
     public List<Job> getAll() {
-        return jobRepository.findAll();
+        return jobRepository.findAllImpl();
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class JobService {
         job.setCreatedBy(theJob.getCreatedBy());
         job.setUpdatedAt(theJob.getUpdatedAt());
         job.setUpdatedBy(theJob.getUpdatedBy());
-
+        job.setIsDeleted(theJob.getIsDeleted());
 
         DatabaseSettings databaseSettings = databaseSettingsService.getDatabaseSettingsById(theJob.getDatabaseSettingsId());
         job.setDatabaseSettings(databaseSettings);
@@ -104,6 +104,8 @@ public class JobService {
             oldJob.setUpdatedAt(job.getUpdatedAt());
             oldJob.setUpdatedBy(job.getUpdatedBy());
 
+            oldJob.setIsDeleted(job.getIsDeleted());
+
 
 
 //        oldJob.setJobName(job.getJobName());
@@ -121,8 +123,13 @@ public class JobService {
     }
     @Transactional
     public void deleteById(Long id) {
-        jobRepository.deleteById(id);
+        jobRepository.deleteByIdImple(id);
     }
 
 
+
+    public List<Job> findByStatusAndIsDeletedFalse() {
+
+        return jobRepository.findAllByStatusAndIsDeletedFalse();
+    }
 }
